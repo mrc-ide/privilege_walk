@@ -65,6 +65,18 @@ plot(seq_len(nrow(data_sorted)), data_sorted$rescaled_score, axes = FALSE,
      pch = data_sorted$pch,
      col = alpha(data_sorted$col, 0.5),
      bg = alpha(data_sorted$bg, 0.5),
-     lwd = 2, cex = 2)
+     lwd = 2, cex = 1.5)
 abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
 axis(side = 2, at = seq(-n_q, n_q), labels = seq(-n_q, n_q))
+
+legend("bottomright", c("Student", "Postdoc", "Academic"),
+       pch = c(21, 22, 23),
+       pt.cex = 1.5, pt.lwd = 2,
+       col = "black", bg = "white")
+
+### TODO:
+
+## add legend to overall plot
+## merge "other" and "NA" into single thing
+## possibly change order of groups so that the "unknown" are to the left
+## add other plots showing statistics by group to better show the impact of gender and ethnicity and the diversity of the audience, at different seniority levels
