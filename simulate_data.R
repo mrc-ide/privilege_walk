@@ -58,8 +58,8 @@ sim_data[, gender_question][which(runif(n_data) < 0.05)] <- NA
 # job questions
 p_prof <- sim_data$privilege_score_0_1
 sim_data[, job_question] <- sapply(seq_len(n_data), function(e)
-  sample(c("Tenured track academic position", "Postdoc"), 1, replace = TRUE,
-         prob = c(p_prof[e], 1-p_prof[e])))
+  sample(c("Tenured track academic position", "Non tenured track academic position", "Postdoc"), 1, replace = TRUE,
+         prob = c(p_prof[e], (1-p_prof[e])/2, (1-p_prof[e])/2)))
 # add students
 sim_data[, job_question][which(runif(n_data) < 0.25)] <- "Student"
 # small amount of other
