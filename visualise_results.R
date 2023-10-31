@@ -10,6 +10,11 @@ library(scales)
 #data <- as.data.frame(read_sheet('https://docs.google.com/spreadsheets/d/18sx4mZehmDCrlRzuzCMv3c_iMJTDO6vE0yOQ5AWqEBc/edit?resourcekey#gid=1171520726'))
 data <- readRDS("simulated_data.rds")
 
+for(i in seq_len(ncol(data))) {
+  data[data[,i] %in% "Other", i] <- "ZOther/NA"
+  data[is.na(data[,i]), i] <- "ZOther/NA"
+}
+
 ### calculate score
 privilege_questions <- grep("privilege", names(data))
 ethnic_question <- grep("ethnic", names(data))
@@ -69,14 +74,30 @@ plot(seq_len(nrow(data_sorted)), data_sorted$rescaled_score, axes = FALSE,
 abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
 axis(side = 2, at = seq(-n_q, n_q), labels = seq(-n_q, n_q))
 
+paste0(data_sorted$gender, data_sorted$ethnicity)
+
 legend("bottomright", c("Student", "Postdoc", "Academic"),
        pch = c(21, 22, 23),
        pt.cex = 1.5, pt.lwd = 2,
-       col = "black", bg = "white")
+       text.col = rep("black", 3),
+       col = rep("black", 3),
+       bg = rep("white", 3),
+       box.lwd = 0, box.col = "white", bty = "o")
+
+# add info on gender and ethnicity
+
+data_sorted$gender_ethnicity <- paste(data_sorted$gender, data_sorted$ethnicity, sep = "\n")
+gender_ethnicity <- unique(data_sorted$gender_ethnicity)
+gender_ethnicity <- gender_ethnicity[-c(grep("NA", gender_ethnicity), grep("Other", gender_ethnicity))]
+par(xpd = TRUE)
+for(i in gender_ethnicity) {
+  x <- mean(range(which(data_sorted$gender_ethnicity %in% i)))
+  y <- 1.1 * n_q
+  text(x, y, i)
+}
 
 ### TODO:
 
-## add legend to overall plot
-## merge "other" and "NA" into single thing
+## do not show "other" and "NA"?
 ## possibly change order of groups so that the "unknown" are to the left
 ## add other plots showing statistics by group to better show the impact of gender and ethnicity and the diversity of the audience, at different seniority levels
