@@ -23,7 +23,7 @@ pie(table(data_sorted$gender_ethnicity_no_na)[c(1, 2, 4, 3)],
 
 ## Does it vary by career stage?
 ```{r diversity_by_gender_and_career_stage, include = TRUE, fig.asp=0.35, dpi=300, fig.width = 11}
-par(mar = c(2.5, 2.5, .5, 1.5), mfrow = c(1, 2))
+par(mar = c(2.5, 5, .5, 1.5), mfrow = c(1, 2))
 
 # gender
 plot(seq_along(job_levs), rep(0, length(job_levs)), col = "white", ylim = c(0, 1),
@@ -103,9 +103,4 @@ boxplot(rescaled_score ~ job_no_na, data = data_sorted,
 abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
 ```
 
-## Slide with Plot
-
-```{r pressure}
-plot(pressure)
-```
 
