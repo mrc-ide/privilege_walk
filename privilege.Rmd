@@ -16,7 +16,7 @@ source("visualise_results.R")
 
 ## How diverse are we?
 ```{r diversity_pie, include = TRUE, fig.asp=1, dpi=300}
-par(mar = c(.5, 1.5, .5, 1.5))
+par(mar = c(.5, 1.5, .5, 2))
 pie(table(data_sorted$gender_ethnicity_no_na)[c(1, 2, 4, 3)],
     col = c(col_f_dark, col_f, col_m, col_m_dark))
 ```
@@ -53,19 +53,19 @@ abline(h = .5, col = "grey", lty = 2)
 ## How privileged are we?
 
 ```{r privilege_overview, include = TRUE, fig.asp=0.5, dpi=300, fig.width = 10}
-par(mfrow = c(1, 1), mar = c(.5, 3, 3, .5))
-plot(seq_len(nrow(data_sorted)), data_sorted$rescaled_score, axes = FALSE,
-     xlab = "Respondents", ylab = "Rescaled score",
+par(xpd = FALSE)
+par(mfrow = c(1, 1), mar = c(.5, 4, 3, .5))
+plot(seq_len(nrow(data_sorted_white_non_white_known_gender)), data_sorted_white_non_white_known_gender$rescaled_score, axes = FALSE,
+     xlab = "Respondents", ylab = "Privilege score",
      ylim = c(-n_q, n_q),
-     pch = data_sorted$pch,
-     col = alpha(data_sorted$col, 0.5),
-     bg = alpha(data_sorted$bg, 0.5),
+     pch = data_sorted_white_non_white_known_gender$pch,
+     col = alpha(data_sorted_white_non_white_known_gender$col, 0.5),
      lwd = 2, cex = 1.5)
 abline(h = c(0, n_q, -n_q), lty = 2)
 axis(side = 2, at = seq(-n_q, n_q), labels = seq(-n_q, n_q))
 
 legend("bottomright", c("Student", "Postdoc", "Academic"),
-       pch = c(21, 22, 23),
+       pch = c(16, 15, 17),
        pt.cex = 1.5, pt.lwd = 2,
        text.col = rep("black", 3),
        col = rep("black", 3),
@@ -73,15 +73,33 @@ legend("bottomright", c("Student", "Postdoc", "Academic"),
        box.lwd = 0, box.col = "white", bty = "o")
 
 # add info on gender and ethnicity
+for(i in c(gender_ethnicity, "ZOther/NA Non white", "ZOther/NA White")) {
+  if(i == gender_ethnicity[1]){
+    abline(v = range(which(data_sorted_white_non_white_known_gender$gender_ethnicity %in% i)), col = "grey")
+  } else{
+    abline(v = max(range(which(data_sorted_white_non_white_known_gender$gender_ethnicity %in% i))), col = "grey")
+  }
+}
+
 par(xpd = TRUE)
 for(i in gender_ethnicity) {
-  x <- mean(range(which(data_sorted$gender_ethnicity %in% i)))
+  x <- mean(range(which(data_sorted_white_non_white_known_gender$gender_ethnicity %in% i)))
   y <- 1.1 * n_q
   text(x, y, i, cex = 1.2)
 }
+
+i <- "ZOther/NA Non white"
+x <- mean(range(which(data_sorted_white_non_white_known_gender$gender_ethnicity %in% i)))
+y <- 1.2 * n_q
+text(x, y, "Other NW", cex = 1.2)
+i <- "ZOther/NA White"
+x <- mean(range(which(data_sorted_white_non_white_known_gender$gender_ethnicity %in% i)))
+y <- 1.1 * n_q
+text(x, y, "Other W", cex = 1.1)
 par(xpd = FALSE)
 
-## TODO: add "more privileged" and "less privileged" at the top and bottom of the graph to make it clear and make sure the questions are asked in a clear way and answers interpreted in the same way. 
+## TODO: 
+## order within each group by score? 
 
 ```
 
@@ -93,14 +111,14 @@ par(mfrow = c(1, 2))
 # distribution of privilege by gender and ethnicity
 boxplot(rescaled_score ~ gender_ethnicity_no_na, data = data_sorted,
         col = c(col_f_dark, col_f, col_m_dark, col_m),
-        xlab = "", ylab = "Rescaled score",
+        xlab = "", ylab = "Privilege score",
         ylim = c(-n_q, n_q),
         frame = FALSE)
 abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
 
 # distribution of privilege by career stage
 boxplot(rescaled_score ~ job_no_na, data = data_sorted,
-        xlab = "", ylab = "Rescaled score",
+        xlab = "", ylab = "Privilege score",
         ylim = c(-n_q, n_q),
         frame = FALSE)
 abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)

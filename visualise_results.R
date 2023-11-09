@@ -7,29 +7,42 @@ library(dplyr, warn.conflicts = FALSE)
 library(scales)
 
 col_m <- "salmon"
-col_f <- "cyan4"
+col_f <- "lightseagreen"
 
-col_m_dark <- "indianred3"
+
+col_m_dark <- "tomato4"
 col_f_dark <- "darkslategrey"
 
 ### Read google sheets data into R
 if(use_simulated_data){
   data <- readRDS("simulated_data.rds")
 }else{
+  #googlesheets4::gs4_deauth()
+  #googlesheets4::gs4_auth()
   data <- as.data.frame(read_sheet('https://docs.google.com/spreadsheets/d/18sx4mZehmDCrlRzuzCMv3c_iMJTDO6vE0yOQ5AWqEBc/edit?resourcekey#gid=1171520726'))
 }
 
 ### Process the data
+
+## first revert the questions on disability and hesitation to speak so that "Yes" means privileged
+data[, grep("disability", names(data))][data[, grep("disability", names(data))] %in% "Yes"] <- "Yes_old"
+data[, grep("disability", names(data))][data[, grep("disability", names(data))] %in% "No"] <- "Yes"
+data[, grep("disability", names(data))][data[, grep("disability", names(data))] %in% "Yes_old"] <- "No"
+
+data[, grep("hesitant", names(data))][data[, grep("hesitant", names(data))] %in% "Yes"] <- "Yes_old"
+data[, grep("hesitant", names(data))][data[, grep("hesitant", names(data))] %in% "No"] <- "Yes"
+data[, grep("hesitant", names(data))][data[, grep("hesitant", names(data))] %in% "Yes_old"] <- "No"
+
 for(i in seq_len(ncol(data))) {
   data[data[,i] %in% "Other", i] <- "ZOther/NA"
   data[is.na(data[,i]), i] <- "ZOther/NA"
 }
 
 ### calculate score
-privilege_questions <- grep("privilege", names(data))
+privilege_questions <- 2:11
 ethnic_question <- grep("ethnic", names(data))
 gender_question <- grep("gender", names(data))
-job_question <- grep("job", names(data))
+job_question <- grep("job level", names(data))
 n_q <- length(privilege_questions)
 data$total_score <- apply(data[, privilege_questions], 1, function(e) sum(e %in% "Yes")) - apply(data[, privilege_questions], 1, function(e) sum(e %in% "No"))
 data$n_q <- apply(data[, privilege_questions], 1, function(e) sum(e %in% c("Yes", "No")))
@@ -37,33 +50,52 @@ data$n_q <- apply(data[, privilege_questions], 1, function(e) sum(e %in% c("Yes"
 ### rescale score in case people didn't respond to all questions
 data$rescaled_score <- data$total_score * data$n_q / n_q
 
+
+# use shape for career stage
+data$job <- data[,job_question]
+data$pch <- data$job
+data$pch[data$job %in% c("Tenured track academic position", "Academic position")] <- 17
+data$pch[data$job %in% "Postdoc"] <- 15
+data$pch[!data$job %in% c("Tenured track academic position", "Academic position", "Postdoc")] <- 16
+
+data$pch_order <- data$pch
+data$pch_order[data$pch == 15] <- 2
+data$pch_order[data$pch %in% 16] <- 1
+data$pch_order[data$pch %in% 17] <- 3
+
+data$pch <- as.numeric(data$pch)
+
 ### sort by score
 data_sorted <- data[order(data[,gender_question],
                           data[, ethnic_question],
-                          data[,job_question]),]
+                          data[, "pch_order"]),]
+                          #data[, "rescaled_score"]),]
 
 ### plot design
 
 # use outer colour for gender
 data_sorted$gender <- data_sorted[,gender_question]
+data_sorted$ethnicity <- data_sorted[,ethnic_question]
 data_sorted$col <- data_sorted$gender
-data_sorted$col[data_sorted$gender %in% "Male"] <- col_m
-data_sorted$col[data_sorted$gender %in% "Female"] <- col_f
+data_sorted$col[data_sorted$gender %in% "Male" & data_sorted$ethnicity %in% "White"] <- col_m
+data_sorted$col[data_sorted$gender %in% "Male" & data_sorted$ethnicity %in% "Non white"] <- col_m_dark
+data_sorted$col[data_sorted$gender %in% "Female" & data_sorted$ethnicity %in% "White"] <- col_f
+data_sorted$col[data_sorted$gender %in% "Female" & data_sorted$ethnicity %in% "Non white"] <- col_f_dark
 data_sorted$col[!data_sorted$gender %in% c("Male", "Female")] <- "grey"
+data_sorted$col[!data_sorted$ethnicity %in% c("White", "Non white")] <- "grey"
 
 # use inner colour for ethnicity
-data_sorted$ethnicity <- data_sorted[,ethnic_question]
-data_sorted$bg <- data_sorted$ethnicity
-data_sorted$bg[data_sorted$ethnicity %in% "White"] <- "white"
-data_sorted$bg[data_sorted$ethnicity %in% "Non white"] <- data_sorted$col[data_sorted$ethnicity %in% "Non white"]
-data_sorted$bg[!data_sorted$ethnicity %in% c("White", "Non white")] <- "grey"
+#data_sorted$bg <- data_sorted$ethnicity
+#data_sorted$bg[data_sorted$ethnicity %in% "White"] <- "white"
+#data_sorted$bg[data_sorted$ethnicity %in% "Non white"] <- data_sorted$col[data_sorted$ethnicity %in% "Non white"]
+#data_sorted$bg[!data_sorted$ethnicity %in% c("White", "Non white")] <- "grey"
 
 # use shape for career stage
 data_sorted$job <- data_sorted[,job_question]
 data_sorted$pch <- data_sorted$job
-data_sorted$pch[data_sorted$job %in% c("Tenured track academic position", "Academic position")] <- 23
-data_sorted$pch[data_sorted$job %in% "Postdoc"] <- 22
-data_sorted$pch[!data_sorted$job %in% c("Tenured track academic position", "Academic position", "Postdoc")] <- 21
+data_sorted$pch[data_sorted$job %in% c("Tenured track academic position", "Academic position")] <- 17
+data_sorted$pch[data_sorted$job %in% "Postdoc"] <- 15
+data_sorted$pch[!data_sorted$job %in% c("Tenured track academic position", "Academic position", "Postdoc")] <- 16
 data_sorted$pch <- as.numeric(data_sorted$pch)
 
 # create gender_ethnicity unique marker
@@ -83,6 +115,10 @@ data_sorted$job_no_na <- factor(data_sorted$job_no_na,
 levels(data_sorted$job_no_na) <- c("Student", "Postdoc",
                                    "Academic\nnot tenured",
                                    "Academic\ntenured")
+
+data_sorted_white_non_white_known_gender <-
+  data_sorted[data_sorted$gender %in% c("Male", "Female", "ZOther/NA") &
+                data_sorted$ethnicity %in% c("White", "Non white"),]
 
 # job levels
 job_levs <- c(NA, "Student", "Postdoc",

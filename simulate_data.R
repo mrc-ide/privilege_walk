@@ -12,10 +12,10 @@ sim_data <- as.data.frame(matrix(NA, nrow = n_data, ncol = ncol(data)))
 names(sim_data) <- names(data)
 
 ### simulate more data in same format:
-privilege_questions <- grep("privilege", names(data))
-etnic_question <- grep("ethnic", names(data))
+privilege_questions <- 2:11
+ethnic_question <- grep("ethnic", names(data))
 gender_question <- grep("gender", names(data))
-job_question <- grep("job", names(data))
+job_question <- grep("job level", names(data))
 
 # privilege_questions
 p_yes <- 0.55
@@ -35,13 +35,13 @@ sim_data$privilege_score_0_1 <- (sim_data$rescaled_score - min(sim_data$rescaled
 
 # ethnic questions
 p_white <- sim_data$privilege_score_0_1
-sim_data[, etnic_question] <- sapply(seq_len(n_data), function(e)
+sim_data[, ethnic_question] <- sapply(seq_len(n_data), function(e)
   sample(c("White", "Non white"), 1, replace = TRUE,
          prob = c(p_white[e], 1-p_white[e])))
 # small amount of other
-sim_data[, etnic_question][which(runif(n_data) < 0.05)] <- "Other"
+sim_data[, ethnic_question][which(runif(n_data) < 0.05)] <- "Other"
 # small amount of NA
-sim_data[, etnic_question][which(runif(n_data) < 0.05)] <- NA
+sim_data[, ethnic_question][which(runif(n_data) < 0.05)] <- NA
 
 
 # gender questions
