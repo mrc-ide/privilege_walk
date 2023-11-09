@@ -6,6 +6,12 @@ library(googlesheets4)
 library(dplyr, warn.conflicts = FALSE)
 library(scales)
 
+col_m <- "salmon"
+col_f <- "cyan4"
+
+col_m_dark <- "indianred3"
+col_f_dark <- "darkslategrey"
+
 ### Read google sheets data into R
 if(use_simulated_data){
   data <- readRDS("simulated_data.rds")
@@ -41,8 +47,8 @@ data_sorted <- data[order(data[,gender_question],
 # use outer colour for gender
 data_sorted$gender <- data_sorted[,gender_question]
 data_sorted$col <- data_sorted$gender
-data_sorted$col[data_sorted$gender %in% "Male"] <- "dodgerblue"
-data_sorted$col[data_sorted$gender %in% "Female"] <- "palevioletred"
+data_sorted$col[data_sorted$gender %in% "Male"] <- col_m
+data_sorted$col[data_sorted$gender %in% "Female"] <- col_f
 data_sorted$col[!data_sorted$gender %in% c("Male", "Female")] <- "grey"
 
 # use inner colour for ethnicity

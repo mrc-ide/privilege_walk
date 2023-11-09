@@ -18,7 +18,7 @@ source("visualise_results.R")
 ```{r diversity_pie, include = TRUE, fig.asp=1, dpi=300}
 par(mar = c(.5, 1.5, .5, 1.5))
 pie(table(data_sorted$gender_ethnicity_no_na)[c(1, 2, 4, 3)],
-    col = c("palevioletred4", "palevioletred", "dodgerblue", "dodgerblue4"))
+    col = c(col_f_dark, col_f, col_m, col_m_dark))
 ```
 
 ## Does it vary by career stage?
@@ -28,20 +28,20 @@ par(mar = c(2.5, 5, .5, 1.5), mfrow = c(1, 2))
 # gender
 plot(seq_along(job_levs), rep(0, length(job_levs)), col = "white", ylim = c(0, 1),
      xlab = "", ylab = "Proportion of females", axes = FALSE)
-axis(side = 1, at = seq_along(job_levs), labels = job_levs_names, tick = FALSE)
-axis(side = 2)
+axis(side = 1, at = seq_along(job_levs), labels = job_levs_names, tick = FALSE, cex.axis = 0.8)
+axis(side = 2, cex.axis = 0.8)
 for(i in seq_along(job_levs)){
   p <- get_prop_f(data_sorted, job_levs[i])
-  points(i, p[1], pch = 19, col = "palevioletred", cex = 1.5)
-  segments(i, p[2], i, p[3], col = "palevioletred", lwd = 3)
+  points(i, p[1], pch = 19, col = col_f, cex = 1.5)
+  segments(i, p[2], i, p[3], col = col_f, lwd = 3)
 }
 abline(h = .5, col = "grey", lty = 2)
 
 # ethnicity
 plot(seq_along(job_levs), rep(0, length(job_levs)), col = "white", ylim = c(0, 1),
      xlab = "", ylab = "Proportion non white", axes = FALSE)
-axis(side = 1, at = seq_along(job_levs), labels = job_levs_names, tick = FALSE)
-axis(side = 2)
+axis(side = 1, at = seq_along(job_levs), labels = job_levs_names, tick = FALSE, cex.axis = 0.8)
+axis(side = 2, cex.axis = 0.8)
 for(i in seq_along(job_levs)){
   p <- get_prop_nw(data_sorted, job_levs[i])
   points(i, p[1], pch = 19, cex = 1.5)
@@ -61,7 +61,7 @@ plot(seq_len(nrow(data_sorted)), data_sorted$rescaled_score, axes = FALSE,
      col = alpha(data_sorted$col, 0.5),
      bg = alpha(data_sorted$bg, 0.5),
      lwd = 2, cex = 1.5)
-abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
+abline(h = c(0, n_q, -n_q), lty = 2)
 axis(side = 2, at = seq(-n_q, n_q), labels = seq(-n_q, n_q))
 
 legend("bottomright", c("Student", "Postdoc", "Academic"),
@@ -80,6 +80,9 @@ for(i in gender_ethnicity) {
   text(x, y, i, cex = 1.2)
 }
 par(xpd = FALSE)
+
+## TODO: add "more privileged" and "less privileged" at the top and bottom of the graph to make it clear and make sure the questions are asked in a clear way and answers interpreted in the same way. 
+
 ```
 
 ## Does it vary by gender/ethnicity/career stage?
@@ -89,7 +92,7 @@ par(mfrow = c(1, 2))
 
 # distribution of privilege by gender and ethnicity
 boxplot(rescaled_score ~ gender_ethnicity_no_na, data = data_sorted,
-        col = c("palevioletred4", "palevioletred", "dodgerblue4", "dodgerblue"),
+        col = c(col_f_dark, col_f, col_m_dark, col_m),
         xlab = "", ylab = "Rescaled score",
         ylim = c(-n_q, n_q),
         frame = FALSE)
