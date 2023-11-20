@@ -44,12 +44,14 @@ ethnic_question <- grep("ethnic", names(data))
 gender_question <- grep("gender", names(data))
 job_question <- grep("job level", names(data))
 n_q <- length(privilege_questions)
-data$total_score <- apply(data[, privilege_questions], 1, function(e) sum(e %in% "Yes")) - apply(data[, privilege_questions], 1, function(e) sum(e %in% "No"))
+## version with scores which are +/-1, removed because Google forms will only calculate scores for the "correct" answer
+#data$total_score <- apply(data[, privilege_questions], 1, function(e) sum(e %in% "Yes")) - apply(data[, privilege_questions], 1, function(e) sum(e %in% "No"))
+## version with scores which are +1 or 0, in line with the scores that google form gives.
+data$total_score <- apply(data[, privilege_questions], 1, function(e) sum(e %in% "Yes"))
 data$n_q <- apply(data[, privilege_questions], 1, function(e) sum(e %in% c("Yes", "No")))
 
 ### rescale score in case people didn't respond to all questions
 data$rescaled_score <- data$total_score * data$n_q / n_q
-
 
 # use shape for career stage
 data$job <- data[,job_question]

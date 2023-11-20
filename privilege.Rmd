@@ -63,12 +63,15 @@ par(xpd = FALSE)
 par(mfrow = c(1, 1), mar = c(.5, 4, 3, .5))
 plot(seq_len(nrow(data_sorted_white_non_white_known_gender)), data_sorted_white_non_white_known_gender$rescaled_score, axes = FALSE,
      xlab = "Respondents", ylab = "Privilege score",
-     ylim = c(-n_q, n_q),
+     #ylim = c(-n_q, n_q), # previously when questions were +/-1 points
+     ylim = c(0, n_q),
      pch = data_sorted_white_non_white_known_gender$pch,
      col = alpha(data_sorted_white_non_white_known_gender$col, 0.5),
      lwd = 2, cex = 1.5)
-abline(h = c(0, n_q, -n_q), lty = 2)
-axis(side = 2, at = seq(-n_q, n_q), labels = seq(-n_q, n_q))
+#abline(h = c(0, n_q, -n_q), lty = 2) # previously when questions were +/-1 points
+abline(h = c(0, n_q, n_q/2), lty = 2)
+axis(side = 2, at = seq(-n_q, n_q), labels = seq(-n_q, n_q)) # previously when questions were +/-1 points
+axis(side = 2, at = seq(0, n_q), labels = seq(0, n_q))
 
 legend("bottomright", c("Student", "Postdoc", "Academic"),
        pch = c(16, 15, 17),
@@ -127,16 +130,20 @@ par(mfrow = c(1, 2))
 boxplot(rescaled_score ~ gender_ethnicity_no_na, data = data_sorted,
         col = c(col_f, col_m, col_f_dark, col_m_dark),
         xlab = "", ylab = "Privilege score",
-        ylim = c(-n_q, n_q),
+        #ylim = c(-n_q, n_q),
+        ylim = c(0, n_q),
         frame = FALSE)
-abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
+#abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
+abline(h = c(0, n_q, n_q/2), col = "grey", lty = 2)
 
 # distribution of privilege by career stage
 boxplot(rescaled_score ~ job_no_na, data = data_sorted,
         xlab = "", ylab = "Privilege score",
-        ylim = c(-n_q, n_q),
+        #ylim = c(-n_q, n_q),
+        ylim = c(0, n_q),
         frame = FALSE)
-abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
+#abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
+abline(h = c(0, n_q, n_q/2), col = "grey", lty = 2)
 
 ## TODO: possibly add Other gender to the boxplots 
 ## don't mix Other and NA for Gender
