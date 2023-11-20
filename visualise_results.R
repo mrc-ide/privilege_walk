@@ -6,12 +6,15 @@ library(googlesheets4)
 library(dplyr, warn.conflicts = FALSE)
 library(scales)
 
-col_m <- "salmon"
-col_f <- "lightseagreen"
+#col_m <- "salmon"
+#col_f <- "lightseagreen"
+#col_m_dark <- "tomato4"
+#col_f_dark <- "darkslategrey"
 
-
-col_m_dark <- "tomato4"
-col_f_dark <- "darkslategrey"
+col_m <- "goldenrod1"
+col_f <- "mediumorchid1"
+col_m_dark <- "darkorange2"
+col_f_dark <- "darkorchid4"
 
 ### Read google sheets data into R
 if(use_simulated_data){

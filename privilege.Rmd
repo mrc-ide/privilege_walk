@@ -123,12 +123,14 @@ par(xpd = FALSE)
 
 ## Does it vary by gender/ethnicity/career stage?
 
-```{r privilege_by_gender_ethnicity, include = TRUE, fig.asp=0.4, dpi=300, fig.width = 14}
+```{r privilege_by_gender_ethnicity, include = TRUE, fig.asp=0.4, dpi=300, fig.width = 15}
 par(mfrow = c(1, 2))
 
+data_sorted$gender_ethnicity_no_na_reordered <- factor(data_sorted$gender_ethnicity_no_na , levels=c("Female Non white", "Female White", "Male Non white", "Male White"))
+
 # distribution of privilege by gender and ethnicity
-boxplot(rescaled_score ~ gender_ethnicity_no_na, data = data_sorted,
-        col = c(col_f, col_m, col_f_dark, col_m_dark),
+boxplot(rescaled_score ~ gender_ethnicity_no_na_reordered, data = data_sorted,
+        col = c(col_f_dark, col_f, col_m_dark, col_m),
         xlab = "", ylab = "Privilege score",
         #ylim = c(-n_q, n_q),
         ylim = c(0, n_q),
