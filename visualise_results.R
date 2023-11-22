@@ -23,6 +23,7 @@ if(use_simulated_data){
   #googlesheets4::gs4_deauth()
   #googlesheets4::gs4_auth()
   data <- as.data.frame(read_sheet('https://docs.google.com/spreadsheets/d/18sx4mZehmDCrlRzuzCMv3c_iMJTDO6vE0yOQ5AWqEBc/edit?resourcekey#gid=1171520726'))
+  data <- data[, -grep("Score", names(data))]
 }
 
 ### Process the data
@@ -83,18 +84,12 @@ data_sorted$gender <- data_sorted[,gender_question]
 data_sorted$ethnicity <- data_sorted[,ethnic_question]
 data_sorted$col <- data_sorted$gender
 data_sorted$col[data_sorted$gender %in% "Male" & data_sorted$ethnicity %in% "White"] <- col_m
-data_sorted$col[data_sorted$gender %in% "Male" & data_sorted$ethnicity %in% "Non white"] <- col_m_dark
+data_sorted$col[data_sorted$gender %in% "Male" & data_sorted$ethnicity %in% "Ethnic minority"] <- col_m_dark
 data_sorted$col[data_sorted$gender %in% "Female" & data_sorted$ethnicity %in% "White"] <- col_f
-data_sorted$col[data_sorted$gender %in% "Female" & data_sorted$ethnicity %in% "Non white"] <- col_f_dark
+data_sorted$col[data_sorted$gender %in% "Female" & data_sorted$ethnicity %in% "Ethnic minority"] <- col_f_dark
 data_sorted$col[!data_sorted$gender %in% c("Male", "Female") & data_sorted$ethnicity %in% "White"] <- "grey"
-data_sorted$col[!data_sorted$gender %in% c("Male", "Female") & data_sorted$ethnicity %in% "Non white"] <- "black"
-data_sorted$col[!data_sorted$ethnicity %in% c("White", "Non white")] <- "grey"
-
-# use inner colour for ethnicity
-#data_sorted$bg <- data_sorted$ethnicity
-#data_sorted$bg[data_sorted$ethnicity %in% "White"] <- "white"
-#data_sorted$bg[data_sorted$ethnicity %in% "Non white"] <- data_sorted$col[data_sorted$ethnicity %in% "Non white"]
-#data_sorted$bg[!data_sorted$ethnicity %in% c("White", "Non white")] <- "grey"
+data_sorted$col[!data_sorted$gender %in% c("Male", "Female") & data_sorted$ethnicity %in% "Ethnic minority"] <- "black"
+data_sorted$col[!data_sorted$ethnicity %in% c("White", "Ethnic minority")] <- "grey"
 
 # use shape for career stage
 data_sorted$job <- data_sorted[,job_question]
@@ -105,10 +100,10 @@ data_sorted$pch[!data_sorted$job %in% c("Tenured track academic position", "Acad
 data_sorted$pch <- as.numeric(data_sorted$pch)
 
 # create gender_ethnicity unique marker
-data_sorted$gender_ethnicity <- paste(data_sorted$gender, data_sorted$ethnicity)
-gender_ethnicity <- c("Female Non white", "Female White", "Female ZOther/NA",
-                      "Male Non white", "Male White", "Male ZOther/NA",
-                      "ZOther/NA Non white", "ZOther/NA White", "ZOther/NA ZOther/NA")
+data_sorted$gender_ethnicity <- paste(data_sorted$gender, data_sorted$ethnicity, sep = "\n")
+gender_ethnicity <- c("Female\nEthnic minority", "Female\nWhite", "Female\nZOther/NA",
+                      "Male\nEthnic minority", "Male\nWhite", "Male\nZOther/NA",
+                      "ZOther/NA\nEthnic minority", "ZOther/NA\nWhite", "ZOther/NA\nZOther/NA")
 if(length(c(grep("NA", gender_ethnicity), grep("Other", gender_ethnicity))) >0)
   gender_ethnicity <- gender_ethnicity[-c(grep("NA", gender_ethnicity), grep("Other", gender_ethnicity))]
 data_sorted$gender_ethnicity_no_na <- data_sorted$gender_ethnicity
@@ -127,7 +122,7 @@ levels(data_sorted$job_no_na) <- c("Student", "Postdoc",
 
 data_sorted_white_non_white_known_gender <-
   data_sorted[data_sorted$gender %in% c("Male", "Female", "ZOther/NA") &
-                data_sorted$ethnicity %in% c("White", "Non white"),]
+                data_sorted$ethnicity %in% c("White", "Ethnic minority"),]
 
 # job levels
 job_levs <- c(NA, "Student", "Postdoc",
@@ -139,7 +134,7 @@ job_levs_names[4] <- "Academic \n not tenured"
 job_levs_names[5] <- "Academic \n tenured"
 
 ### factoring things
-data_sorted$gender_ethnicity_no_na <- factor(data_sorted$gender_ethnicity_no_na, levels = c("Female White", "Male White", "Female Non white", "Male Non white"))
+data_sorted$gender_ethnicity_no_na <- factor(data_sorted$gender_ethnicity_no_na, levels = c("Female\nWhite", "Male\nWhite", "Female\nEthnic minority", "Male\nEthnic minority"))
 
 ### useful functions
 get_prop_f <- function(data_sorted, by_job = NA)
@@ -163,10 +158,10 @@ get_prop_nw <- function(data_sorted, by_job = NA)
   } else{
     dat <- data_sorted
   }
-  x <- dat$ethnicity[dat$ethnicity %in% c("White", "Non white")]
-  x <- factor(x, levels = c("Non white", "White"))
+  x <- dat$ethnicity[dat$ethnicity %in% c("White", "Ethnic minority")]
+  x <- factor(x, levels = c("Ethnic minority", "White"))
   table_nw <- table(x)
-  prop_nw <- binom::binom.confint(table_nw["Non white"], sum(table_nw), method = "exact")
+  prop_nw <- binom::binom.confint(table_nw["Ethnic minority"], sum(table_nw), method = "exact")
   c(prop_nw$mean, prop_nw$lower, prop_nw$upper)
 }
 

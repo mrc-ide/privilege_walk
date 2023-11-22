@@ -16,7 +16,7 @@ source("visualise_results.R")
 
 ## How diverse are we?
 ```{r diversity_pie, include = TRUE, fig.asp=1, dpi=300}
-par(mar = c(.5, 1.5, .5, 2))
+par(mar = c(3, 3, 3, 3))
 pie(table(data_sorted$gender_ethnicity_no_na)[c(1, 2, 4, 3)],
     col = c(col_f, col_m, col_m_dark, col_f_dark))
 ```
@@ -42,7 +42,7 @@ abline(h = .5, col = "grey", lty = 2)
 
 # ethnicity
 plot(seq_along(job_levs), rep(0, length(job_levs)), col = "white", ylim = c(0, 1),
-     xlab = "", ylab = "Proportion non white", axes = FALSE)
+     xlab = "", ylab = "Proportion ethnic minority", axes = FALSE)
 axis(side = 1, at = seq_along(job_levs), labels = job_levs_names, tick = FALSE, cex.axis = 0.8)
 axis(side = 2, cex.axis = 0.8)
 for(i in seq_along(job_levs)){
@@ -82,7 +82,7 @@ legend("bottomright", c("Student", "Postdoc", "Academic"),
        box.lwd = 0, box.col = "white", bty = "o")
 
 # add info on gender and ethnicity
-for(i in c(gender_ethnicity, "ZOther/NA Non white", "ZOther/NA White")) {
+for(i in c(gender_ethnicity, "ZOther/NA\nEthnic minority", "ZOther/NA\nWhite")) {
   tmp <- which(data_sorted_white_non_white_known_gender$gender_ethnicity %in% i)
   if(length(tmp) > 0) {
     if(i == gender_ethnicity[1]){
@@ -103,14 +103,14 @@ for(i in gender_ethnicity) {
   }
 }
 
-i <- "ZOther/NA Non white"
+i <- "ZOther/NA\nEthnic minority"
 tmp <- which(data_sorted_white_non_white_known_gender$gender_ethnicity %in% i)
 if(length(tmp) > 0) {
   x <- mean(range(tmp))
-  y <- 1.2 * n_q
-  text(x, y, "Other NW", cex = 1.2)
+  y <- 1.15 * n_q
+  text(x, y, "Other Em", cex = 1.2)
 }
-i <- "ZOther/NA White"
+i <- "ZOther/NA\nWhite"
 tmp <- which(data_sorted_white_non_white_known_gender$gender_ethnicity %in% i)
 if(length(tmp) > 0) {
   x <- mean(range(tmp))
@@ -124,9 +124,9 @@ par(xpd = FALSE)
 ## Does it vary by gender/ethnicity/career stage?
 
 ```{r privilege_by_gender_ethnicity, include = TRUE, fig.asp=0.4, dpi=300, fig.width = 15}
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 2), mgp=c(3,2,0))
 
-data_sorted$gender_ethnicity_no_na_reordered <- factor(data_sorted$gender_ethnicity_no_na , levels=c("Female Non white", "Female White", "Male Non white", "Male White"))
+data_sorted$gender_ethnicity_no_na_reordered <- factor(data_sorted$gender_ethnicity_no_na , levels=c("Female\nEthnic minority", "Female\nWhite", "Male\nEthnic minority", "Male\nWhite"))
 
 # distribution of privilege by gender and ethnicity
 boxplot(rescaled_score ~ gender_ethnicity_no_na_reordered, data = data_sorted,
