@@ -34,8 +34,19 @@ for(i in seq_along(job_levs)){
   p <- get_prop_f(data_sorted, job_levs[i])
   if(!is.na(p[1]))
   {
-    points(i, p[1], pch = 19, col = col_f, cex = 1.5)
-    segments(i, p[2], i, p[3], col = col_f, lwd = 3)
+    if (i == 1) 
+    {
+      pch <- 18
+      cex <- 4
+      lwd <- 6
+    }else
+    {
+      pch <- 19
+      cex <- 1.5
+      lwd <- 3
+    }
+    points(i, p[1], pch = pch, col = col_f, cex = cex)
+    segments(i, p[2], i, p[3], col = col_f, lwd = lwd)
   }
 }
 abline(h = .5, col = "grey", lty = 2)
@@ -49,8 +60,19 @@ for(i in seq_along(job_levs)){
   p <- get_prop_nw(data_sorted, job_levs[i])
   if(!is.na(p[1]))
   {
-    points(i, p[1], pch = 19, cex = 1.5)
-    segments(i, p[2], i, p[3], lwd = 3)
+    if (i == 1) 
+    {
+      pch <- 18
+      cex <- 4
+      lwd <- 6
+    }else
+    {
+      pch <- 19
+      cex <- 1.5
+      lwd <- 3
+    }
+    points(i, p[1], pch = pch, cex = cex)
+    segments(i, p[2], i, p[3], lwd = lwd)
   }
 }
 abline(h = .5, col = "grey", lty = 2)
@@ -62,7 +84,7 @@ abline(h = .5, col = "grey", lty = 2)
 par(xpd = FALSE)
 par(mfrow = c(1, 1), mar = c(.5, 4, 3, .5))
 plot(seq_len(nrow(data_sorted_white_non_white_known_gender)), data_sorted_white_non_white_known_gender$rescaled_score, axes = FALSE,
-     xlab = "Respondents", ylab = "Privilege score",
+     xlab = "Respondents", ylab = "",
      #ylim = c(-n_q, n_q), # previously when questions were +/-1 points
      ylim = c(0, n_q),
      pch = data_sorted_white_non_white_known_gender$pch,
@@ -72,6 +94,14 @@ plot(seq_len(nrow(data_sorted_white_non_white_known_gender)), data_sorted_white_
 abline(h = c(0, n_q, n_q/2), lty = 2)
 axis(side = 2, at = seq(-n_q, n_q), labels = seq(-n_q, n_q)) # previously when questions were +/-1 points
 axis(side = 2, at = seq(0, n_q), labels = seq(0, n_q))
+
+mtext("Increasing privilege", side = 2, line = 3, col = "red", cex = 1.5)
+par(xpd = TRUE)
+mylims <- par("usr")
+x <- mylims[1]
+arrows(x, -1, x, n_q+1.5, length = 0.15, angle = 30,
+       code = 2, col = "red", lwd = 3)
+par(xpd = FALSE)
 
 legend("bottomright", c("Student", "Postdoc", "Academic"),
        pch = c(16, 15, 17),
@@ -124,23 +154,31 @@ par(xpd = FALSE)
 ## Does it vary by gender/ethnicity/career stage?
 
 ```{r privilege_by_gender_ethnicity, include = TRUE, fig.asp=0.4, dpi=300, fig.width = 15}
-par(mfrow = c(1, 2), mgp=c(3,2,0))
+par(mfrow = c(1, 2), mgp=c(3,2,0), mar = c(5, 5, 1, 1))
 
 data_sorted$gender_ethnicity_no_na_reordered <- factor(data_sorted$gender_ethnicity_no_na , levels=c("Female\nEthnic minority", "Female\nWhite", "Male\nEthnic minority", "Male\nWhite"))
 
 # distribution of privilege by gender and ethnicity
 boxplot(rescaled_score ~ gender_ethnicity_no_na_reordered, data = data_sorted,
         col = c(col_f_dark, col_f, col_m_dark, col_m),
-        xlab = "", ylab = "Privilege score",
+        xlab = "", ylab = "",
         #ylim = c(-n_q, n_q),
         ylim = c(0, n_q),
         frame = FALSE)
 #abline(h = c(0, n_q, -n_q), col = "grey", lty = 2)
 abline(h = c(0, n_q, n_q/2), col = "grey", lty = 2)
 
+mtext("Increasing privilege", side = 2, line = 4, col = "red", cex = 1.5)
+par(xpd = TRUE)
+mylims <- par("usr")
+x <- mylims[1]
+arrows(x, -1, x, n_q+.5, length = 0.15, angle = 30,
+       code = 2, col = "red", lwd = 3)
+par(xpd = FALSE)
+
 # distribution of privilege by career stage
 boxplot(rescaled_score ~ job_no_na, data = data_sorted,
-        xlab = "", ylab = "Privilege score",
+        xlab = "", ylab = "",
         #ylim = c(-n_q, n_q),
         ylim = c(0, n_q),
         frame = FALSE)
