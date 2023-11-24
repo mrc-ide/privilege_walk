@@ -62,12 +62,15 @@ data$job <- data[,job_question]
 data$pch <- data$job
 data$pch[data$job %in% c("Tenured track academic position", "Academic position")] <- 17
 data$pch[data$job %in% "Postdoc"] <- 15
-data$pch[!data$job %in% c("Tenured track academic position", "Academic position", "Postdoc")] <- 16
+data$pch[data$job %in% "ZOther/NA"] <- 8
+data$pch[!data$job %in% c("Tenured track academic position", "Academic position", "Postdoc", "ZOther/NA")] <- 16
+
 
 data$pch_order <- data$pch
-data$pch_order[data$pch == 15] <- 2
-data$pch_order[data$pch %in% 16] <- 1
-data$pch_order[data$pch %in% 17] <- 3
+data$pch_order[data$pch %in% 15] <- 3
+data$pch_order[data$pch %in% 16] <- 2
+data$pch_order[data$pch %in% 17] <- 4
+data$pch_order[data$pch %in% 8] <- 1
 
 data$pch <- as.numeric(data$pch)
 
@@ -96,7 +99,8 @@ data_sorted$job <- data_sorted[,job_question]
 data_sorted$pch <- data_sorted$job
 data_sorted$pch[data_sorted$job %in% c("Tenured track academic position", "Academic position")] <- 17
 data_sorted$pch[data_sorted$job %in% "Postdoc"] <- 15
-data_sorted$pch[!data_sorted$job %in% c("Tenured track academic position", "Academic position", "Postdoc")] <- 16
+data_sorted$pch[data_sorted$job %in% "ZOther/NA"] <- 8
+data_sorted$pch[!data_sorted$job %in% c("Tenured track academic position", "Academic position", "Postdoc", "ZOther/NA")] <- 16
 data_sorted$pch <- as.numeric(data_sorted$pch)
 
 # create gender_ethnicity unique marker

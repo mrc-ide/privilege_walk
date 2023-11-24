@@ -103,12 +103,12 @@ arrows(x, -1, x, n_q+1.5, length = 0.15, angle = 30,
        code = 2, col = "red", lwd = 3)
 par(xpd = FALSE)
 
-legend("bottomright", c("Student", "Postdoc", "Academic"),
-       pch = c(16, 15, 17),
+legend("bottomright", c("Student", "Postdoc", "Academic", "Other"),
+       pch = c(16, 15, 17, 8),
        pt.cex = 1.5, pt.lwd = 2,
-       text.col = rep("black", 3),
-       col = rep("black", 3),
-       bg = rep("white", 3),
+       text.col = rep("black", 4),
+       col = rep("black", 4),
+       bg = rep("white", 4),
        box.lwd = 0, box.col = "white", bty = "o")
 
 # add info on gender and ethnicity
