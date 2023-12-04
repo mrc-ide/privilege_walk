@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r get_data, include = FALSE}
 use_simulated_data = FALSE # TRUE
-source("visualise_results.R")
+source("source_code.R")
 ```
 
 ## How diverse are we?
